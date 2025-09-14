@@ -97,12 +97,12 @@ async function summarizeText(text, maxSentences = 3) {
       );
     } catch (err) {
       console.warn(
-        "⚠️ OpenAI summarization failed, falling back:",
+        "OpenAI summarization failed, falling back:",
         err.message
       );
     }
   } else {
-    console.warn("⚠️ No OPENAI_API_KEY found, using local summarizer.");
+    console.warn("No OPENAI_API_KEY found, using local summarizer.");
   }
 
   // 2. Fallback to local

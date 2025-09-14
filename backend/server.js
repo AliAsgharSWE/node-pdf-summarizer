@@ -22,15 +22,12 @@ const uploadRoute = require("./routes/upload");
 // Define upload directory BEFORE using it
 const UPLOAD_DIR = path.join(__dirname, "uploads");
 if (!fs.existsSync(UPLOAD_DIR)) {
-  console.log("📂 Creating uploads directory:", UPLOAD_DIR);
   fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 } else {
-  console.log("📂 Uploads directory exists:", UPLOAD_DIR);
 }
 
 const app = express();
 
-console.log("⚙️ Setting up middleware...");
 app.use(
   cors({
     origin: "http://localhost:3000",
@@ -41,19 +38,15 @@ app.use(
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-console.log("✅ Middleware ready");
 
 // Serve uploaded files
 app.use("/uploads", express.static(UPLOAD_DIR));
-console.log("📡 Serving static files from /uploads");
 
 // Routes
-console.log("🔗 Registering routes...");
 app.use("/api", uploadRoute);
 
 // Basic health check
 app.get("/", (req, res) => {
-  console.log("💓 Health check endpoint called");
   res.send("🚀 Node PDF Summarizer API is running");
 });
 
@@ -61,4 +54,3 @@ const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
   console.log(`✅ Server listening on http://localhost:${PORT}`);
 });
-console.log("🚀 Application started");
