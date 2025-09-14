@@ -1,11 +1,9 @@
-# PDF Summarizer (Fullstack)
+# PDF Summarizer (Fullstack, TypeScript)
 
-A fullstack PDF summarizer built with **Next.js** (frontend) and **Node.js + Express** (backend).  
+A fullstack PDF summarizer built with **Next.js** (frontend) and **Node.js + Express (TypeScript)** (backend).  
 It allows users to upload PDF files, extract text, and generate summaries using **OpenAI API** (if available) or a **local summarizer fallback**. MongoDB can be used to save documents for later retrieval.
 
 ---
-
-## I am adding the OpenAI key to test the development and am explicitly sending the .env file via WhatsApp.
 
 ## Project Structure
 
@@ -14,23 +12,27 @@ It allows users to upload PDF files, extract text, and generate summaries using 
 project/
 ├─ backend/
 │ ├─ uploads/ # Temporary storage for uploaded PDFs
-│ ├─ server.js # Backend entry point
+│ ├─ server.ts # Backend entry point
 │ ├─ package.json
-│ ├─ README.md
+│ ├─ tsconfig.json # TypeScript configuration
 │ ├─ routes/
-│ │ └─ upload.js # API endpoints for upload & retrieval
+│ │ └─ documentRoutes.ts # API endpoints for upload & retrieval
 │ ├─ services/
-│ │ ├─ pdfService.js # PDF text extraction
-│ │ └─ summarizer.js # Summarization (OpenAI + fallback)
-│ └─ models/
-│ └─ Document.js # MongoDB schema
+│ │ ├─ pdfService.ts # PDF text extraction
+│ │ └─ summarizerService.ts # Summarization (OpenAI + fallback)
+│ ├─ models/
+│ │ └─ Document.ts # MongoDB schema
+│ └─ middlewares/
+│ └─ errorHandler.ts # Error handling middleware
 ├─ frontend/
 │ ├─ app/
 │ │ └─ page.tsx # Main page for uploading PDFs and viewing summaries
-  ├─src/
-│ │ └─ components/FetchByID and UploadPDF.
+│ ├─ src/
+│ │ └─ components/
+│ │ ├─ FetchByID.tsx
+│ │ └─ UploadPDF.tsx
 │ ├─ package.json
-│ ├─ README.md
+│ ├─ tsconfig.json # TypeScript configuration
 │ └─ ...other frontend files
 └─ README.md # This combined project README
 ```
@@ -56,11 +58,12 @@ cd backend
 npm install
 ```
 
-Configure environment variables (optional for MongoDB/OpenAI):
+Configure environment variables in .env:
 
-MONGO_URI — MongoDB connection string
+MONGO_URI=<Your MongoDB connection string>
+OPENAI_API_KEY=<Your OpenAI API key>
+PORT=8000
 
-OPENAI_API_KEY — OpenAI API key for summarization
 
 Run the server:
 ```
@@ -69,13 +72,13 @@ npm run dev   # Development with nodemon
 npm start     # Production
 ```
 
-Backend runs at http://localhost:8000
+Backend runs at: http://localhost:8000
 
-Uploaded PDFs are stored temporarily in backend/uploads/
+Uploaded PDFs are stored temporarily in backend/uploads/.
 
 ## Frontend
 
-Install dependencies:
+## Install dependencies:
 ```
 cd frontend
 npm install
@@ -86,7 +89,7 @@ Run development server:
 npm run dev
 ```
 
-Frontend runs at http://localhost:3000
+Frontend runs at: http://localhost:3000
 
 Main page for uploading PDFs: app/page.tsx
 
@@ -100,7 +103,7 @@ Document Summary — Generated via OpenAI API (if key is available) or local sum
 
 MongoDB Storage — Save parsed text and summary; retrieve via GET /api/documents/:id.
 
-Fetch by ID — Retrieve previously saved documents using their MongoDB ID.
+### Fetch by ID — Retrieve previously saved documents using their MongoDB ID.
 
 Clear Sections — Reset parsed text and summary for a fresh start.
 
@@ -130,15 +133,15 @@ Response:
   "id": "<MongoDB id>"
 }
 ```
-## Notes & Error Handling
+Notes & Error Handling
 
 Validates that uploaded files are PDFs (application/pdf).
 
 Returns 400 if no file is uploaded or no text can be extracted.
 
-PDFs are stored temporarily in uploads/; optional auto-delete available in upload.js.
+PDFs are stored temporarily in uploads/; optional auto-delete available in routes.
 
-**Summarization uses OpenAI first (if API key exists), with a fallback to the local summarizer.**
+Summarization uses OpenAI first (if API key exists), with a fallback to the local summarizer.
 
 ## Frontend Enhancements
 
