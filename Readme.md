@@ -76,10 +76,10 @@ Uploaded PDFs are stored temporarily in backend/uploads/
 ## Frontend
 
 Install dependencies:
-
+```
 cd frontend
 npm install
-
+```
 
 Run development server:
 
@@ -147,7 +147,3 @@ Tabbed UI — Switch between uploading PDFs and fetching by ID.
 Loader — Shows a spinner during upload/fetch operations.
 
 Clear Button — Clears summary and parsed text.
-
-Dark Mode Support — UI adapts to light and dark themes.
-
-Responsive Design — Works on desktop and mobile screens.
