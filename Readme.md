@@ -63,11 +63,11 @@ MONGO_URI — MongoDB connection string
 OPENAI_API_KEY — OpenAI API key for summarization
 
 Run the server:
-
+```
 npm run dev   # Development with nodemon
 # or
 npm start     # Production
-
+```
 
 Backend runs at http://localhost:8000
 
@@ -82,9 +82,9 @@ npm install
 ```
 
 Run development server:
-
+```
 npm run dev
-
+```
 
 Frontend runs at http://localhost:3000
 
