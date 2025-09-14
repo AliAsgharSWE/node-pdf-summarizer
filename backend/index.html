@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>PDF Summarizer</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: #f4f6f9;
+        margin: 0;
+        padding: 0;
+        color: #333;
+      }
+
+      .container {
+        max-width: 900px;
+        margin: 40px auto;
+        background: #fff;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        text-align: center;
+        color: #2c3e50;
+        margin-bottom: 20px;
+      }
+
+      .upload-box {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 25px;
+      }
+
+      input[type="file"] {
+        padding: 10px;
+        border: 2px dashed #3498db;
+        border-radius: 8px;
+        background: #ecf6fc;
+        cursor: pointer;
+        flex: 1;
+      }
+
+      button {
+        background: #3498db;
+        border: none;
+        color: white;
+        padding: 12px 18px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      }
+
+      button:hover {
+        background: #2980b9;
+      }
+
+      .card {
+        background: #fafafa;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        padding: 20px;
+        margin-top: 20px;
+      }
+
+      .card h3 {
+        margin-top: 0;
+        color: #2c3e50;
+      }
+
+      #summary {
+        font-size: 1rem;
+        line-height: 1.5;
+        white-space: pre-wrap;
+      }
+
+      textarea {
+        width: 100%;
+        height: 200px;
+        resize: vertical;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 10px;
+        font-family: monospace;
+        background: #fdfdfd;
+      }
+
+      .loader {
+        display: none;
+        text-align: center;
+        margin-top: 15px;
+        color: #555;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>📄 PDF Summarizer</h1>
+
+      <div class="upload-box">
+        <input type="file" id="file" accept="application/pdf" />
+        <button id="upload" type="button">Upload</button>
+      </div>
+
+      <div class="loader" id="loader">⏳ Processing your PDF...</div>
+
+      <div class="card">
+        <h3>Summary</h3>
+        <div id="summary">No summary yet.</div>
+      </div>
+
+      <div class="card">
+        <h3>Parsed Text</h3>
+        <textarea
+          id="parsedText"
+          readonly
+          placeholder="Extracted text will appear here..."
+        ></textarea>
+      </div>
+    </div>
+
+    <script>
+      const uploadBtn = document.getElementById("upload");
+      const loader = document.getElementById("loader");
+      const summaryBox = document.getElementById("summary");
+      const parsedTextBox = document.getElementById("parsedText");
+
+      uploadBtn.addEventListener("click", async () => {
+        const f = document.getElementById("file").files[0];
+        if (!f) {
+          console.warn("⚠️ No file selected");
+          return alert("Please select a PDF file first.");
+        }
+
+        console.log("📂 Selected file:", f);
+
+        const fd = new FormData();
+        fd.append("file", f);
+
+        loader.style.display = "block";
+        summaryBox.innerText = "...";
+        parsedTextBox.value = "";
+
+        try {
+          console.log("🚀 Sending request to backend...");
+          const res = await fetch("http://localhost:8000/api/upload", {
+            method: "POST",
+            body: fd,
+          });
+
+          console.log("📡 Response status:", res.status, res.statusText);
+
+          let data;
+          try {
+            data = await res.json();
+            console.log("✅ Parsed JSON response:", data);
+          } catch (jsonErr) {
+            console.error("❌ Failed to parse JSON:", jsonErr);
+            const text = await res.text();
+            console.log("📜 Raw response text:", text);
+            throw new Error("Backend did not return JSON");
+          }
+
+          loader.style.display = "none";
+
+          if (!res.ok) {
+            console.error("⚠️ Server returned error:", data);
+            alert(data.error || "Something went wrong");
+            return;
+          }
+
+          summaryBox.innerText = data.summary || "No summary generated.";
+          parsedTextBox.value = data.parsedText || "";
+          console.log("🎉 Successfully updated UI");
+        } catch (err) {
+          loader.style.display = "none";
+          console.error("❌ Fetch error:", err);
+          alert("Upload failed: " + err.message);
+        }
+      });
+    </script>
+  </body>
+</html>
